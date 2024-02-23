@@ -1,4 +1,11 @@
-import { FileDown, Filter, MoreHorizontal, Plus, Search } from 'lucide-react'
+import {
+  FileDown,
+  Filter,
+  Loader2,
+  MoreHorizontal,
+  Plus,
+  Search,
+} from 'lucide-react'
 import { Header } from './components/header'
 import { Tabs } from './components/tabs'
 import { Button } from './components/ui/button'
@@ -14,7 +21,7 @@ import {
 import { Pagination } from './components/pagination'
 import { useSearchParams } from 'react-router-dom'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
 
 export interface TagResponse {
   first: number
@@ -40,7 +47,11 @@ export function App() {
 
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1
 
-  const { data: tagsResponse, isLoading } = useQuery<TagResponse>({
+  const {
+    data: tagsResponse,
+    isLoading,
+    isFetching,
+  } = useQuery<TagResponse>({
     queryKey: ['get-tags', urlFilter, page],
     queryFn: async () => {
       const response = await fetch(
@@ -55,7 +66,8 @@ export function App() {
     placeholderData: keepPreviousData,
   })
 
-  function handleFilter() {
+  function handleFilter(event: FormEvent) {
+    event.preventDefault()
     setSearchParams((params) => {
       params.set('page', '1')
       params.set('filter', filter)
@@ -81,10 +93,13 @@ export function App() {
             <Plus className="size-3" />
             Create new
           </Button>
+          {isFetching && (
+            <Loader2 className="size-4 animate-spin text-zinc-500" />
+          )}
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
+          <form onSubmit={handleFilter} className="flex items-center gap-2">
             <Input variant="filter">
               <Search className="size-3" />
               <Control
@@ -93,11 +108,11 @@ export function App() {
                 value={filter}
               />
             </Input>
-            <Button onClick={handleFilter}>
+            <Button type="submit">
               <Filter className="size-3" />
-              Filter
+              Apply filters
             </Button>
-          </div>
+          </form>
 
           <Button>
             <FileDown className="size-3" />
