@@ -61,6 +61,3 @@ This project demonstrates a complete React application for data listing with sea
 **Resources:**
 
 * **Sample JSON API:** Includes a sample JSON API for demonstration purposes.
-* **Documentation:** Complete documentation on how to install, configure, and use the project.
-
-
